@@ -1,0 +1,40 @@
+.ng-cloak {
+    display: none !important
+}
+
+button, input, select, label {
+    font-size: 16px !important
+}
+
+body {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #eee
+}
+
+canvas {
+    width: 100%
+}
+
+.col-xs-12 {
+    padding-right: 10px;
+    padding-left: 10px
+}
+
+@media (min-width: 767px) {
+    #dim, #vel {
+        width: 80px
+    }
+
+    .fixedsize {
+        width: 100px !important
+    }
+
+    .form-group {
+        margin-left: 10px
+    }
+
+    .form-group:first-child {
+        margin-left: 0
+    }
+}
