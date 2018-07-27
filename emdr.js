@@ -1,6 +1,5 @@
 const translations = appTranslations(); // from translations.js
 
-
 // Define a new module for our app
 angular.module("app", [])
     .constant('translations', translations)
@@ -33,6 +32,18 @@ angular.module("app", [])
             movementAxis: '1,0', // movement axis (X, Y)
             lang: 'en' // default language: English
         };
+
+        let cookie = getCookie('emdrJsonCookie');
+
+        if (cookie) {
+            $scope.conf = JSON.parse(cookie);
+        } else {
+            saveConfToCookie();
+        }
+
+        function saveConfToCookie() {
+            setCookie('emdrJsonCookie', JSON.stringify($scope.conf), 180); // 180 days
+        }
 
         function getX() {
             return Number($scope.conf.movementAxis.split(',')[0]);
@@ -88,6 +99,8 @@ angular.module("app", [])
         }
 
         $scope.init = function () {
+            saveConfToCookie();
+
             $scope.movement.dirty = false;
             $scope.movement.running = false;
             if ($scope.circle) {
@@ -101,6 +114,7 @@ angular.module("app", [])
         };
 
         $scope.redrawCircle = function (arg) {
+            saveConfToCookie();
 
             $scope.updatePlayground();
             var pos;
@@ -137,6 +151,8 @@ angular.module("app", [])
         };
 
         $scope.redrawBg = function () {
+            saveConfToCookie();
+
             if (bgRectangle) {
                 bgRectangle.remove();
             }
