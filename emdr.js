@@ -213,6 +213,7 @@ angular.module("app", [])
                     $scope.circle.position.x -= $scope.conf.velocity.value * $scope.playgrd.x.delta / $scope.conf.frameDisplacement;
                 }
                 else {
+                    playSound();
                     $scope.movement.v = -$scope.movement.v;
                 }
             }
