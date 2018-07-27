@@ -6,10 +6,13 @@ const ANGULAR_FREQUENCY = REAL_TIME_FREQUENCY * 2 * Math.PI;
 const LENGTH = (LENGTH_MS / 1000) * 44100;
 
 let audioContext = new AudioContext();
-let myBuffer = audioContext.createBuffer(1, LENGTH, 44100);
-let myArray = myBuffer.getChannelData(0);
+let myLeftChannelBuffer = audioContext.createBuffer(2, LENGTH, 44100); // 2 channels
+let myRightChannelBuffer = audioContext.createBuffer(2, LENGTH, 44100); // 2 channels
+let myLeftArray = myLeftChannelBuffer.getChannelData(0);
+let myRightArray = myRightChannelBuffer.getChannelData(1);
 for (let sampleNumber = 0 ; sampleNumber < LENGTH ; sampleNumber++) {
-    myArray[sampleNumber] = generateSample(sampleNumber);
+    myLeftArray[sampleNumber] = generateSample(sampleNumber);
+    myRightArray[sampleNumber] = generateSample(sampleNumber);
 }
 
 function generateSample(sampleNumber) {
@@ -18,9 +21,13 @@ function generateSample(sampleNumber) {
     return Math.sin(currentAngle);
 }
 
-function playSound() {
+function playSound(channel) {
     let src = audioContext.createBufferSource();
-    src.buffer = myBuffer;
+    if (channel == 'left') {
+        src.buffer = myLeftChannelBuffer;
+    } else if (channel == 'right') {
+        src.buffer = myRightChannelBuffer;
+    }
     src.connect(audioContext.destination);
     src.start();
 }

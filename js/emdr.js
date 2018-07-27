@@ -215,7 +215,11 @@ angular.module("app", [])
                 }
                 else {
                     if ($scope.conf.sound) {
-                        playSound();
+                        if ($scope.movement.v == '1') {
+                            playSound('right');
+                        } else {
+                            playSound('left');
+                        }
                     }
                     $scope.movement.v = -$scope.movement.v;
                 }
