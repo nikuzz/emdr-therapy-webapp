@@ -19,10 +19,10 @@
           href="https:///maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-    <script src="translations.js"></script>
-    <script src="cookies.js"></script>
-    <script src="sound.js"></script>
-    <script src="emdr.js"></script>
+    <script src="js/translations.js"></script>
+    <script src="js/cookies.js"></script>
+    <script src="js/sound.js"></script>
+    <script src="js/emdr.js"></script>
 
     <link rel="stylesheet" type="text/css" href="emdr.css">
 </head>
@@ -63,6 +63,10 @@
             <label for="color" class="hidden-xs hidden-sm"><span ng-bind="trans[lang].colors">Colors</span></label>
             <input id="color" class="form-control" type="color" ng-model="color" ng-change="redrawCircle()"/>
             <input id="bgcolor" class="form-control" type="color" ng-model="bgcolor" ng-change="redrawBg()"/>
+        </div>
+        <div class="form-group">
+            <label for="sound" class="hidden-xs hidden-sm"><span ng-bind="trans[lang].sound">Sound</span></label>
+            <input id="sound" class="form-control" type="checkbox" ng-model="conf.sound" ng-change=""/>
         </div>
         <div class="form-group pull-right">
             <select id="lang" class="form-control" ng-model="lang">

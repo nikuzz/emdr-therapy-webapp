@@ -10,6 +10,7 @@ function appTranslations() {
             oblique1: 'Oblique 1',
             oblique2: 'Oblique 2',
             speed: 'Speed',
+            sound: 'Sound',
             start: 'Start',
             stop: 'Stop'
         },
@@ -23,6 +24,7 @@ function appTranslations() {
             oblique1: 'Schräg 1',
             oblique2: 'Schräg 2',
             speed: 'Geschwindigkeit',
+            sound: 'Klang',
             start: 'Anfang',
             stop: 'Halt'
         },
@@ -36,6 +38,7 @@ function appTranslations() {
             oblique1: 'Oblique 1',
             oblique2: 'Oblique 2',
             speed: 'Vélocité',
+            sound: 'Son',
             start: 'Démarrer',
             stop: 'Arrêtez'
         },
@@ -49,6 +52,7 @@ function appTranslations() {
             oblique1: 'Obliquo 1',
             oblique2: 'Obliquo 2',
             speed: 'Velocità',
+            sound: 'Suono',
             start: 'Partenza',
             stop: 'Stop'
         },
@@ -62,6 +66,7 @@ function appTranslations() {
             oblique1: 'Oblicua 1',
             oblique2: 'Oblicua 2',
             speed: 'Velocidad',
+            sound: 'Sonido',
             start: 'Inicia',
             stop: 'Para'
         }

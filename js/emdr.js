@@ -28,6 +28,7 @@ angular.module("app", [])
                 min: 2,
                 max: 100
             },
+            sound: false,
             frameDisplacement: 1000, // divider to calculate the displacement (for each frame) in relation to the size of the playground
             movementAxis: '1,0', // movement axis (X, Y)
             lang: 'en' // default language: English
@@ -213,7 +214,9 @@ angular.module("app", [])
                     $scope.circle.position.x -= $scope.conf.velocity.value * $scope.playgrd.x.delta / $scope.conf.frameDisplacement;
                 }
                 else {
-                    playSound();
+                    if ($scope.conf.sound) {
+                        playSound();
+                    }
                     $scope.movement.v = -$scope.movement.v;
                 }
             }

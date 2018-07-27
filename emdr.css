@@ -26,6 +26,10 @@ canvas {
         width: 80px
     }
 
+    #sound {
+        width: 30px
+    }
+
     .fixedsize {
         width: 100px !important
     }
