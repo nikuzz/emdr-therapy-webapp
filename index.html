@@ -1,101 +1,125 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="utf-8"/>
-    <title>EMDR Therapy</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="keywords" content="emdr, emdr treatment, emdr therapy, self-administrated emdr"/>
-    <meta name="description" content="A simple webapp for self-administrated EMDR treatment"/>
-    <meta name="author" content="Georgi Petrov - ggeorgip@gmail.com"/>
-    <meta name="robots" content="all"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="pragma" content="no-cache"/>
+    <head>
+        <meta charset="utf-8"/>
+        <title>EMDR Therapy</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="keywords" content="emdr, emdr treatment, emdr therapy, self-administrated emdr"/>
+        <meta name="description" content="A simple webapp for self-administrated EMDR treatment"/>
+        <meta name="author" content="Nico Aymet - nico@aymet.it"/>
+        <meta name="robots" content="all"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="pragma" content="no-cache"/>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.2/angular.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.11.5/paper-core.min.js"></script>
-    <link rel="stylesheet" type="text/css"
-          href="https:///maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="_lib/jquery.min.js"></script>
+        <script src="_lib/angular.min.js"></script>
+        <script src="_lib/paper-core.min.js"></script>
+        <link rel="stylesheet" type="text/css"
+              href="_lib/bootstrap.min.css">
+        <script src="_lib/bootstrap.min.js"></script>
+        <script src="_lib/angular-file-saver.min.js"></script>
 
-    <script src="js/translations.js"></script>
-    <script src="js/cookies.js"></script>
-    <script src="js/sound.js"></script>
-    <script src="js/emdr.js"></script>
+        <script src="js/translations.js"></script>
+        <script src="js/cookies.js"></script>
+        <script src="js/sound.js"></script>
+        <script src="js/emdr.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="emdr.css">
-</head>
+        <link rel="stylesheet" type="text/css" href="emdr.css">
+    </head>
 
 
-<body class="container-fluid ng-cloak" ng-app="app" ng-controller="ctrl">
-<div class="row">
-    <div class="col-xs-12">
-        <canvas id="myCanvas" resize="true"></canvas>
-    </div>
-    <div class="col-xs-12 form-inline">
-        <div class="form-group">
-            <button class="form-control btn btn-primary fixedsize" ng-click="start()" ng-if="!isRunning()"><span
-                    ng-bind="trans[lang].start">Start</span></button>
-            <button class="form-control btn btn-danger fixedsize ng-cloak" ng-click="stop()" ng-if="isRunning()"><span
-                    ng-bind="trans[lang].stop">Stop</span></button>
+    <body class="container-fluid ng-cloak" ng-app="app" ng-controller="ctrl">
+        <div class="row">
+            <div class="menu col-11 form-inline">
+                <div class="form-group">
+                    <button class="form-control btn btn-primary fixedsize" ng-click="start()" ng-if="!isRunning()"><span
+                            ng-bind="trans[lang].start">Start</span></button>
+                    <button class="form-control btn btn-danger fixedsize ng-cloak" ng-click="stop()" ng-if="isRunning()"><span
+                            ng-bind="trans[lang].stop">Stop</span></button>
+                    <button class="form-control btn btn-danger fixedsize ng-cloak" ng-click="init()"><span
+                            ng-bind="trans[lang].reset">Reset</span></button>
+                </div>
+                <div class="form-group">
+                    <label for="mov" class="hidden-xs hidden-sm"><span ng-bind="trans[lang].movement">Movement</span></label>
+                    <select id="mov" class="form-control" ng-model="conf.movementAxis" ng-change="init()">
+                        <option value="1,0">{{trans[lang].horizontal}}</option>
+                        <option value="0,1">{{trans[lang].vertical}}</option>
+                        <option value="1,1">{{trans[lang].oblique1}}</option>
+                        <option value="1,-1">{{trans[lang].oblique2}}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="vel" class="hidden-xs hidden-sm"><span ng-bind="trans[lang].speed">Speed</span></label>
+                    <input id="vel" class="form-control" type="number" step="{{conf.velocity.step}}" min="{{conf.velocity.min}}"
+                           max="{{conf.velocity.max}}" ng-model="conf.velocity.value"/>
+                </div>
+                <div class="form-group">
+                    <label for="dur" class="hidden-xs hidden-sm"><span ng-bind="trans[lang].duration">Duration</span></label>
+                    <input id="dur" class="form-control" type="number" step="{{conf.duration.step}}" min="{{conf.duration.min}}"
+                           max="{{conf.duration.max}}" ng-model="conf.duration.value"/>
+                </div>
+                <div class="form-group">
+                    <label for="dim" class="hidden-xs hidden-sm"><span ng-bind="trans[lang].dimension">Dimension</span></label>
+                    <input id="dim" class="form-control" type="number" step="{{conf.radius.step}}" min="{{conf.radius.min}}"
+                           max="{{conf.radius.max}}" ng-model="conf.radius.value" ng-change="redrawCircle()"/>
+                </div>
+                <div class="form-group">
+                    <label for="color" class="hidden-xs hidden-sm"><span ng-bind="trans[lang].colors">Colors</span></label>
+                    <input id="color" class="form-control" type="color" ng-model="color" ng-change="redrawCircle()"/>
+                    <input id="bgcolor" class="form-control" type="color" ng-model="bgcolor" ng-change="redrawBg()"/>
+                </div>
+                <div class="form-group">
+                    <label for="sound" class="hidden-xs hidden-sm"><span ng-bind="trans[lang].sound">Sound</span></label>
+                    <input id="sound" class="form-control" type="checkbox" ng-model="conf.sound" ng-change=""/>
+                </div>
+                <div class="form-group">
+                    <button class="form-control btn btn-primary fixedsize ng-cloak" ng-click="saveConf()"><span
+                            ng-bind="trans[lang].save">Save</span></button>
+                </div>
+                <div class="form-group pull-right">
+                    <select id="lang" class="form-control" ng-model="lang">
+                        <option value="en">English</option>
+                        <option value="de">Deutsch</option>
+                        <option value="fr">Français</option>
+                        <option value="it">Italiano</option>
+                        <option value="es">Español</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-1 form-inline">
+                <div class="form-group">
+                    <button class="form-control btn btn-primary ng-cloak" ng-click="toogleMenu()"><span
+                            ng-bind="trans[lang].menu">Menu</span></button>
+                    <button class="form-control btn btn-primary ng-cloak" ng-click="fullScreen()"><span
+                            ng-bind="trans[lang].fullscreen">FullScreen</span></button>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="mov" class="hidden-xs hidden-sm"><span ng-bind="trans[lang].movement">Movement</span></label>
-            <select id="mov" class="form-control" ng-model="conf.movementAxis" ng-change="init()">
-                <option value="1,0">{{trans[lang].horizontal}}</option>
-                <option value="0,1">{{trans[lang].vertical}}</option>
-                <option value="1,1">{{trans[lang].oblique1}}</option>
-                <option value="1,-1">{{trans[lang].oblique2}}</option>
-            </select>
+        <div class="col-12">
+            <canvas id="myCanvas" resize="true" data-paper-hidpi="off"></canvas>
         </div>
-        <div class="form-group">
-            <label for="vel" class="hidden-xs hidden-sm"><span ng-bind="trans[lang].speed">Speed</span></label>
-            <input id="vel" class="form-control" type="number" step="{{conf.velocity.step}}" min="{{conf.velocity.min}}"
-                   max="{{conf.velocity.max}}" ng-model="conf.velocity.value"/>
+        <div class="row" ng-if="debug">
+            <div class="col-xs-4">
+                <h4>circle.position</h4>
+                <pre>{{circle.position | json}}</pre>
+            </div>
+            <div class="col-xs-4">
+                <h4>playgrd</h4>
+                <pre>{{playgrd | json}}</pre>
+            </div>
+            <!--    <div class="col-xs-4">
+                    <h4>conf</h4>
+                    <pre>{{conf | json}}</pre>
+                </div>-->
+            <div class="col-xs-4">
+                <h4>event</h4>
+                <pre>{{event | json}}</pre>
+            </div>
+            <div class="col-xs-4">
+                <h4>movement</h4>
+                <pre>{{movement | json}}</pre>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="dim" class="hidden-xs hidden-sm"><span ng-bind="trans[lang].dimension">Dimension</span></label>
-            <input id="dim" class="form-control" type="number" step="{{conf.radius.step}}" min="{{conf.radius.min}}"
-                   max="{{conf.radius.max}}" ng-model="conf.radius.value" ng-change="redrawCircle()"/>
-        </div>
-        <div class="form-group">
-            <label for="color" class="hidden-xs hidden-sm"><span ng-bind="trans[lang].colors">Colors</span></label>
-            <input id="color" class="form-control" type="color" ng-model="color" ng-change="redrawCircle()"/>
-            <input id="bgcolor" class="form-control" type="color" ng-model="bgcolor" ng-change="redrawBg()"/>
-        </div>
-        <div class="form-group">
-            <label for="sound" class="hidden-xs hidden-sm"><span ng-bind="trans[lang].sound">Sound</span></label>
-            <input id="sound" class="form-control" type="checkbox" ng-model="conf.sound" ng-change=""/>
-        </div>
-        <div class="form-group pull-right">
-            <select id="lang" class="form-control" ng-model="lang">
-                <option value="en">English</option>
-                <option value="de">Deutsch</option>
-                <option value="fr">Français</option>
-                <option value="it">Italiano</option>
-                <option value="es">Español</option>
-            </select>
-        </div>
-    </div>
-</div>
-<div class="row" ng-if="debug">
-    <div class="col-xs-4">
-        <h4>circle.position</h4>
-        <pre>{{circle.position | json}}</pre>
-    </div>
-    <div class="col-xs-4">
-        <h4>playgrd</h4>
-        <pre>{{playgrd | json}}</pre>
-    </div>
-    <div class="col-xs-4">
-        <h4>conf</h4>
-        <pre>{{conf | json}}</pre>
-    </div>
-    <div class="col-xs-4">
-        <h4>event</h4>
-        <pre>{{event | json}}</pre>
-    </div>
-</div>
-</body>
+    </body>
 </html>

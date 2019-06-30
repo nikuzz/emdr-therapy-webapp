@@ -14,24 +14,31 @@ angular.module("app", [])
         $scope.debug = false;
         $scope.conf = {
             defaultColor: '#d43f3a', // Default circle color
-            defaultBgColor: '#1f1f1f', // Default background color
-            border: 0.02, // circle border
+            defaultBgColor: '#ffffff', // Default background color
+            border: 0.01, // circle border
             radius: {
                 value: 50, // circle radius
-                step: 5,
+                step: 1,
                 min: 10,
                 max: 300
             },
             velocity: {
-                value: 20, // velocity increment
-                step: 2,
-                min: 2,
-                max: 100
+                value: 50, // velocity increment
+                step: 1,
+                min: 1,
+                max: 200
+            },
+            duration: {
+                value: 30, // total set duration
+                step: 1,
+                min: 1,
+                max: 300
             },
             sound: false,
-            frameDisplacement: 1000, // divider to calculate the displacement (for each frame) in relation to the size of the playground
+            frameDisplacement: 5000, // divider to calculate the displacement (for each frame) in relation to the size of the playground
             movementAxis: '1,0', // movement axis (X, Y)
-            lang: 'en' // default language: English
+            lang: 'es', // default language: Español
+            menu: true
         };
 
         let cookie = getCookie('emdrJsonCookie');
@@ -64,7 +71,9 @@ angular.module("app", [])
             dirty: false,
             running: false,
             a: reverse[$scope.conf.dir], // asse di scorrimento
-            v: 1 // verso di scorrimento
+            v: 1, // verso di scorrimento
+            time: 0, // time di inizio
+            timeRun: 0 // tempo esecuzione
         };
 
         $scope.updatePlayground = function () {
@@ -103,6 +112,7 @@ angular.module("app", [])
             saveConfToCookie();
 
             $scope.movement.dirty = false;
+            $scope.movement.time = 0;
             $scope.movement.running = false;
             if ($scope.circle) {
                 $scope.circle.remove();
@@ -168,16 +178,17 @@ angular.module("app", [])
             bgRectangle = new Path.Rectangle({
                 point: [0, 0],
                 size: [view.size.width, view.size.height],
-                fillColor: $scope.bgcolor,
-                selected: true
+                fillColor: $scope.bgcolor
             });
 
             bgRectangle.sendToBack();
         };
+        
 
         $scope.start = function () {
             $scope.movement.running = true;
             $scope.movement.dirty = true;
+            $scope.movement.time = Date.now();
         };
 
         $scope.stop = function () {
@@ -196,11 +207,23 @@ angular.module("app", [])
             if ($scope.isRunning()) $scope.stop();
             else $scope.start();
         };
+        
+        $scope.toggleSound = function () {
+            if ($scope.conf.sound) $scope.conf.sound = false;
+            else $scope.conf.sound = true;
+        };
+        
+        $scope.toggleMenu = function () {
+            if ($scope.conf.menu) $scope.conf.menu = false;
+            else $scope.conf.menu = true;
+        };
 
         view.onFrame = function (event) {
             if (!$scope.movement.running) {
                 return;
             }
+            
+            $scope.movement.timeRun=Date.now() - $scope.movement.time;
 
             if ($scope.debug && event.count % 10 == 0) {
                 $scope.event = event;
@@ -212,14 +235,18 @@ angular.module("app", [])
                     $scope.circle.position.x += $scope.conf.velocity.value * $scope.playgrd.x.delta / $scope.conf.frameDisplacement;
                 } else if ($scope.movement.v == -getX() && $scope.circle.position.x > $scope.playgrd.x.min) {
                     $scope.circle.position.x -= $scope.conf.velocity.value * $scope.playgrd.x.delta / $scope.conf.frameDisplacement;
-                }
-                else {
+                } else {
                     if ($scope.conf.sound) {
                         if ($scope.movement.v == '1') {
                             playSound('right');
                         } else {
                             playSound('left');
                         }
+                    }
+                    if($scope.movement.v == -getX() && (Date.now() - $scope.movement.time) > ($scope.conf.duration.value * 1000)){
+                        $scope.init();
+                        $scope.$apply();
+                        return;
                     }
                     $scope.movement.v = -$scope.movement.v;
                 }
@@ -230,18 +257,66 @@ angular.module("app", [])
                 } else if ($scope.movement.v == -getY() && $scope.circle.position.y > $scope.playgrd.y.min) {
                     $scope.circle.position.y -= $scope.conf.velocity.value * $scope.playgrd.y.delta / $scope.conf.frameDisplacement;
                 } else if (getX() === 0) {
+                    if(($scope.movement.v == -getY()) && (Date.now() - $scope.movement.time) > ($scope.conf.duration.value * 1000)){
+                        $scope.init();
+                        $scope.$apply();
+                        return;
+                    }
                     $scope.movement.v = -$scope.movement.v;
                 }
             }
         };
+        
+        view.onResize = function (event) {
+            // Whenever the window is resized
+            $scope.redrawBg();
+            $scope.init();
+            $scope.$apply();
+        }
+        
+        $scope.saveConf = function() {
+            var jsonse = JSON.stringify($scope.conf);
+            var blob = new Blob([jsonse], {
+            type: "application/json"
+            });
+            $scope.filename = $scope.filename || "EMDR";
+            saveAs(blob, $scope.filename + ".emdr");
+        }
+        
+        $scope.fullScreen = function() {
+            let elem = document.documentElement;
+            let methodToBeInvoked = elem.requestFullscreen ||
+            elem.webkitRequestFullScreen || elem['mozRequestFullscreen']
+                ||
+            elem['msRequestFullscreen'];
+            if (methodToBeInvoked) methodToBeInvoked.call(elem);
+        }
 
-        view.onKeyUp = function (e) {
+        view.onKeyDown = function (e) {
             if ($scope.debug) {
                 console.log(e.key, e);
             }
 
             if (['space', 'enter'].indexOf(e.key) >= 0) {
                 $scope.toggleRun();
+                $scope.$apply();
+            } else if (['r','R'].indexOf(e.key) >= 0) {
+                $scope.init();
+                $scope.$apply();
+            } else if (['h','H'].indexOf(e.key) >= 0) {
+                $scope.conf.movementAxis = '1,0';
+                $scope.$apply();
+            } else if (['v','V'].indexOf(e.key) >= 0) {
+                $scope.conf.movementAxis = '0,1';
+                $scope.$apply();
+            } else if (['1'].indexOf(e.key) >= 0) {
+                $scope.conf.movementAxis = '1,1';
+                $scope.$apply();
+            } else if (['2'].indexOf(e.key) >= 0) {
+                $scope.conf.movementAxis = '1,-1';
+                $scope.$apply();
+            } else if (['s','S'].indexOf(e.key) >= 0) {
+                $scope.toggleSound();
                 $scope.$apply();
             } else if (['dirty'].indexOf(e.key) >= 0 && $scope.conf.velocity.value < $scope.conf.velocity.max) {
                 $scope.debug = !$scope.debug;
