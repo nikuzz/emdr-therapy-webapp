@@ -284,12 +284,30 @@ angular.module("app", [])
         }
         
         $scope.fullScreen = function() {
-            let elem = document.documentElement;
+if (
+                    document.fullscreenElement ||
+                    document.webkitFullscreenElement ||
+                    document.mozFullScreenElement ||
+                    document.msFullscreenElement
+            ) {
+if (document.exitFullscreen) {
+	document.exitFullscreen();
+} else if (document.webkitExitFullscreen) {
+	document.webkitExitFullscreen();
+} else if (document.mozCancelFullScreen) {
+	document.mozCancelFullScreen();
+} else if (document.msExitFullscreen) {
+	document.msExitFullscreen();
+}
+} else {         
+
+   let elem = document.documentElement;
             let methodToBeInvoked = elem.requestFullscreen ||
             elem.webkitRequestFullScreen || elem['mozRequestFullscreen']
                 ||
             elem['msRequestFullscreen'];
             if (methodToBeInvoked) methodToBeInvoked.call(elem);
+}
         }
 
         view.onKeyDown = function (e) {
@@ -317,6 +335,9 @@ angular.module("app", [])
                 $scope.$apply();
             } else if (['s','S'].indexOf(e.key) >= 0) {
                 $scope.toggleSound();
+                $scope.$apply();
+            } else if (['f','F'].indexOf(e.key) >= 0) {
+                $scope.fullScreen();
                 $scope.$apply();
             } else if (['dirty'].indexOf(e.key) >= 0 && $scope.conf.velocity.value < $scope.conf.velocity.max) {
                 $scope.debug = !$scope.debug;
