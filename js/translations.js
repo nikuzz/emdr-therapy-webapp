@@ -79,7 +79,7 @@ function appTranslations() {
             start: 'Inicia [↵]',
             stop: 'Para [↵]',
             reset: 'Reset [R]',
-            save: 'Guardar'
+            save: 'Guardar',
             full: ''
         }
     }
