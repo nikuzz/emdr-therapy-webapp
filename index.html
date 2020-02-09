@@ -28,8 +28,8 @@
     </head>
 
 
-    <body class="container-fluid ng-cloak" ng-app="app" ng-controller="ctrl">
-        <div class="row">
+    <body class="container-fluid ng-cloak" ng-app="app" ng-controller="ctrl"  ng-dblclick="fullScreen()">
+        <div class="row" ng-show="isMenuVisible()">
             <div class="menu col-11 form-inline">
                 <div class="form-group">
                     <button class="form-control btn btn-primary fixedsize" ng-click="start()" ng-if="!isRunning()"><span
@@ -72,7 +72,7 @@
                     <label for="sound" class="hidden-xs hidden-sm"><span ng-bind="trans[lang].sound">Sound</span></label>
                     <input id="sound" class="form-control" type="checkbox" ng-model="conf.sound" ng-change=""/>
                 </div>
-                <div class="form-group">
+<!--                <div class="form-group">
                     <button class="form-control btn btn-primary fixedsize ng-cloak" ng-click="saveConf()"><span
                             ng-bind="trans[lang].save">Save</span></button>
                 </div>
@@ -84,11 +84,11 @@
                         <option value="it">Italiano</option>
                         <option value="es">Español</option>
                     </select>
-                </div>
+                </div>-->
             </div>
             <div class="col-1 form-inline">
                 <div class="form-group">
-                    <button class="form-control btn btn-primary ng-cloak" ng-click="toogleMenu()"><span
+                    <button class="form-control btn btn-primary ng-cloak" ng-click="toggleMenu()"><span
                             ng-bind="trans[lang].menu">Menu</span></button>
                     <button class="form-control btn btn-primary ng-cloak" ng-click="fullScreen()"><span
                             ng-bind="trans[lang].fullscreen">FullScreen</span></button>

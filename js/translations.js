@@ -14,7 +14,10 @@ function appTranslations() {
             sound: 'Sound',
             start: 'Start',
             stop: 'Stop',
-            reset: 'Reset'
+            reset: 'Reset',
+            save: 'Salva',
+            fullscreen: '[F]',
+            menu: '☰'
         },
         de: {
             label: 'Deutsch',
@@ -30,7 +33,10 @@ function appTranslations() {
             sound: 'Klang',
             start: 'Anfang',
             stop: 'Halt',
-            reset: 'Reset'
+            reset: 'Reset',
+            save: 'Salva',
+            fullscreen: '[F]',
+            menu: '☰'
         },
         fr: {
             label: 'Français',
@@ -46,7 +52,10 @@ function appTranslations() {
             sound: 'Son',
             start: 'Démarrer',
             stop: 'Arrêtez',
-            reset: 'Reset'
+            reset: 'Reset',
+            save: 'Salva',
+            fullscreen: '[F]',
+            menu: '☰'
         },
         it: {
             label: 'Italiano',
@@ -62,7 +71,10 @@ function appTranslations() {
             sound: 'Suono',
             start: 'Partenza',
             stop: 'Stop',
-            reset: 'Ressetta'
+            reset: 'Ressetta',
+            save: 'Salva',
+            fullscreen: '[F]',
+            menu: '☰'
         },
         es: {
             label: 'Español',
@@ -80,7 +92,8 @@ function appTranslations() {
             stop: 'Para [↵]',
             reset: 'Reset [R]',
             save: 'Guardar',
-            full: ''
+            fullscreen: '[F]',
+            menu: '☰'
         }
     }
 }
